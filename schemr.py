@@ -173,20 +173,20 @@ class Schemr(object):
 		if not is_ST2:
 			try:
 				xml = sublime.load_resource(scheme_path)
-			except:
-				print('Error loading ' + scheme_path)
+			except e:
+				print('[WARN] Schemr | Failed to load XML resource while determining if color scheme is dark or light, adding scheme to scheme list without [Dark] or [Light] suffix: ' + str(e) + ' in ' + scheme_path)
 				return False
 			try:
 				plist = parser.parse_string(xml)
-			except (parser.PropertyListParseError):
-				print('Error parsing ' + scheme_path)
+			except parser.PropertyListParseError as e:
+				print('[WARN] Schemr | Failed to parse XML plist while determining if color scheme is dark or light, adding scheme to scheme list without [Dark] or [Light] suffix: ' + str(e) + ' in ' + scheme_path)
 				return False
 		else:
 			xml = os.path.join(sublime.packages_path(), scheme_path.replace('Packages/', ''))
 			try:
 				plist = parser.parse_file(xml)
-			except (parser.PropertyListParseError):
-				print('Error parsing ' + scheme_path)
+			except parser.PropertyListParseError as e:
+				print('[WARN] Schemr | Failed to parse XML plist while determining if color scheme is dark or light, adding scheme to scheme list without [Dark] or [Light] suffix: ' + str(e) + ' in ' + scheme_path)
 				return False
 
 		try:
