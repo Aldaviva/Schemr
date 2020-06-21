@@ -32,20 +32,20 @@ class Schemr(object):
 		favorites = self.get_favorites()
 
 		try: # use find_resources() first for ST3.
-			scheme_paths = sublime.find_resources('*.tmTheme')
+			scheme_paths = sublime.find_resources('*.tmTheme') + sublime.find_resources('*.sublime-color-scheme')
 
 		except: # fallback to walk() for ST2
 			# Load the paths for schemes contained in zipped .sublime-package files.
 			for root, dirs, files in os.walk(sublime.installed_packages_path()):
 				for package in (package for package in files if package.endswith('.sublime-package')):
 					zf = zipfile.ZipFile(os.path.join(sublime.installed_packages_path(), package))
-					for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme')):
+					for filename in (filename for filename in zf.namelist() if filename.endswith('.tmTheme') or filename.endswith('.sublime-color-scheme')):
 						filepath = os.path.join(root, package, filename).replace(sublime.installed_packages_path(), 'Packages').replace('.sublime-package', '').replace('\\', '/')
 						scheme_paths.append(filepath)
 
 			# Load the paths for schemes contained in folders.
 			for root, dirs, files in os.walk(sublime.packages_path()):
-				for filename in (filename for filename in files if filename.endswith('.tmTheme')):
+				for filename in (filename for filename in files if filename.endswith('.tmTheme') or filename.endswith('.sublime-color-scheme')):
 					filepath = os.path.join(root, filename).replace(sublime.packages_path(), 'Packages').replace('\\', '/')
 					scheme_paths.append(filepath)
 
@@ -228,7 +228,7 @@ class Schemr(object):
 		return self.favorites.get('data').get('schemr_favorites')
 
 	def filter_scheme_name(self, scheme_path):
-		regex = re.compile('(\ \(SL\))|(\ Color\ Highlighter)?.tmTheme', re.IGNORECASE)
+		regex = re.compile('(\ \(SL\))|(\ Color\ Highlighter)?.(tmTheme|sublime-color-scheme)', re.IGNORECASE)
 		scheme_name = re.sub(regex, '', scheme_path).split('/').pop()
 		return scheme_name
 
